@@ -1,4 +1,9 @@
-from tradingagents.agents.utils.agent_utils import get_language_instruction
+from tradingagents.agents.context import (
+    get_instrument_context_from_state,
+    get_language_instruction,
+    opponent_argument_or_opening,
+    report_or_absent,
+)
 
 
 def create_bear_researcher(llm):
@@ -7,31 +12,37 @@ def create_bear_researcher(llm):
         history = investment_debate_state.get("history", "")
         bear_history = investment_debate_state.get("bear_history", "")
 
-        current_response = investment_debate_state.get("current_response", "")
-        market_research_report = state["market_report"]
-        sentiment_report = state["sentiment_report"]
-        news_report = state["news_report"]
-        fundamentals_report = state["fundamentals_report"]
+        current_response = opponent_argument_or_opening(
+            investment_debate_state.get("current_response", ""), "bull analyst"
+        )
+        market_research_report = report_or_absent(state["market_report"], "market")
+        sentiment_report = report_or_absent(state["sentiment_report"], "sentiment")
+        news_report = report_or_absent(state["news_report"], "news")
+        fundamentals_report = report_or_absent(state["fundamentals_report"], "fundamentals")
+        instrument_context = get_instrument_context_from_state(state)
         asset_type = state.get("asset_type", "stock")
         target_label = "stock" if asset_type == "stock" else "asset"
         fundamentals_label = (
             "Company fundamentals report"
             if asset_type == "stock"
-            else "Asset fundamentals report (may be unavailable for crypto)"
+            else "Asset fundamentals report (unavailable for forex; may be unavailable for crypto)"
         )
+
+        research_focus = "- Risks and Challenges: Highlight factors like market saturation, financial instability, or macroeconomic threats that could hinder the stock's performance.\n- Competitive Weaknesses: Emphasize vulnerabilities such as weaker market positioning, declining innovation, or threats from competitors.\n- Negative Indicators: Use evidence from financial data, market trends, or recent adverse news to support your position."
+        if asset_type == "forex":
+            research_focus = '- Relative Policy: Assess evidence for base-currency depreciation against the quote currency.\n- Macro Risks: Compare central-bank policy, rate differentials, inflation and growth using dated sources.\n- Negative Indicators: Use verified price action, event risk and relevant macro news; disclose unavailable data.'
 
         prompt = f"""You are a Bear Analyst making the case against investing in the {target_label}. Your goal is to present a well-reasoned argument emphasizing risks, challenges, and negative indicators. Leverage the provided research and data to highlight potential downsides and counter bullish arguments effectively.
 
 Key points to focus on:
 
-- Risks and Challenges: Highlight factors like market saturation, financial instability, or macroeconomic threats that could hinder the stock's performance.
-- Competitive Weaknesses: Emphasize vulnerabilities such as weaker market positioning, declining innovation, or threats from competitors.
-- Negative Indicators: Use evidence from financial data, market trends, or recent adverse news to support your position.
+{research_focus}
 - Bull Counterpoints: Critically analyze the bull argument with specific data and sound reasoning, exposing weaknesses or over-optimistic assumptions.
 - Engagement: Present your argument in a conversational style, directly engaging with the bull analyst's points and debating effectively rather than simply listing facts.
 
 Resources available:
 
+{instrument_context}
 Market research report: {market_research_report}
 Social media sentiment report: {sentiment_report}
 Latest world affairs news: {news_report}
