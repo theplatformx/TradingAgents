@@ -25,15 +25,17 @@ def create_bull_researcher(llm):
         fundamentals_label = (
             "Company fundamentals report"
             if asset_type == "stock"
-            else "Asset fundamentals report (may be unavailable for crypto)"
+            else "Asset fundamentals report (unavailable for forex; may be unavailable for crypto)"
         )
+
+        research_focus = "- Growth Potential: Highlight the company's market opportunities, revenue projections, and scalability.\n- Competitive Advantages: Emphasize factors like unique products, strong branding, or dominant market positioning.\n- Positive Indicators: Use financial health, industry trends, and recent positive news as evidence."
+        if asset_type == "forex":
+            research_focus = '- Relative Policy: Assess evidence for base-currency appreciation against the quote currency.\n- Macro Drivers: Compare central-bank policy, rate differentials, inflation and growth using dated sources.\n- Positive Indicators: Use verified price action and relevant macro news; disclose unavailable data.'
 
         prompt = f"""You are a Bull Analyst advocating for investing in the {target_label}. Your task is to build a strong, evidence-based case emphasizing growth potential, competitive advantages, and positive market indicators. Leverage the provided research and data to address concerns and counter bearish arguments effectively.
 
 Key points to focus on:
-- Growth Potential: Highlight the company's market opportunities, revenue projections, and scalability.
-- Competitive Advantages: Emphasize factors like unique products, strong branding, or dominant market positioning.
-- Positive Indicators: Use financial health, industry trends, and recent positive news as evidence.
+{research_focus}
 - Bear Counterpoints: Critically analyze the bear argument with specific data and sound reasoning, addressing concerns thoroughly and showing why the bull perspective holds stronger merit.
 - Engagement: Present your argument in a conversational style, engaging directly with the bear analyst's points and debating effectively rather than just listing data.
 

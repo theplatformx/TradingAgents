@@ -79,6 +79,21 @@ _SHANGHAI_SH = re.compile(r"^(\d{6})\.SH$")
 _CRYPTO_QUOTES = ("USDT", "USDC", "USD")
 
 
+def forex_pair(raw: str) -> tuple[str, str] | None:
+    """Identify a supported currency pair without a vendor or broker lookup.
+
+    Metals and arbitrary broker suffixes are deliberately excluded. A valid
+    pair does not imply that the vendor has data or the broker can trade it.
+    """
+    if not isinstance(raw, str):
+        return None
+    pair = raw.strip().upper().rstrip("+").removesuffix("=X")
+    if (len(pair) == 6 and pair[:3] in _FOREX_CURRENCIES
+            and pair[3:] in _FOREX_CURRENCIES and pair[:3] != pair[3:]):
+        return pair[:3], pair[3:]
+    return None
+
+
 def crypto_base(raw: str) -> str | None:
     """Return the crypto base (e.g. ``BTC``) for a known USD/USDT/USDC-quoted
     crypto symbol in any form the pipeline may hold — ``BTC-USD``, ``BTCUSD``,

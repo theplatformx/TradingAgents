@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from tradingagents.dataflows.date_window import is_historical
+from tradingagents.dataflows.symbols import forex_pair, normalize_symbol
 from tradingagents.dataflows.vendors.yahoo.fundamentals import get_company_profile
 
 logger = logging.getLogger(__name__)
@@ -123,6 +124,25 @@ def build_instrument_context(
     industry or exchange it holds today is not given, since it may not have held
     on the analysis date.
     """
+    if asset_type == "forex":
+        pair = forex_pair(ticker)
+        if pair is None:
+            raise ValueError(f"Unsupported forex pair: {ticker!r}; use a currency pair such as EURUSD")
+        base, quote = pair
+        return (
+            f"Analyze the forex pair `{ticker}` (research symbol `{normalize_symbol(ticker)}`). "
+            f"Base currency: {base}; quote currency: {quote}. The rate is {quote} per one {base}. "
+            f"A bullish/BUY view means {base} strengthens against {quote}; a bearish/SELL view means it weakens. "
+            "Use relative central-bank policy, rates, inflation, employment, macro news and price evidence. "
+            "This pair is not a company: do not invent revenues, earnings, competitive products or stock fundamentals. "
+            "Use only information available by the analysis date and disclose missing macro data. "
+            "This is research only. Vendor rates are not executable broker bid/ask quotes. "
+            "Broker spread, commissions, swaps, leverage, margin, contract size and account/prop-firm limits "
+            "are unknown; do not infer lot sizes, execution prices or realized account profit. "
+            "Directional backtest returns are not MT5 execution results; default stock benchmarks are unsuitable "
+            "for judging forex alpha without an explicit benchmark choice."
+        )
+
     is_crypto = asset_type == "crypto"
     instrument_label = "asset" if is_crypto else "instrument"
     context = (

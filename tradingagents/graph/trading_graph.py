@@ -12,7 +12,7 @@ from tradingagents.agents.context import build_instrument_context, resolve_instr
 from tradingagents.agents.rating import run_rating
 from tradingagents.dataflows.config import run_config, run_config_context, set_config
 from tradingagents.dataflows.date_window import get_current_date, is_historical
-from tradingagents.dataflows.symbols import safe_ticker_component
+from tradingagents.dataflows.symbols import forex_pair, safe_ticker_component
 from tradingagents.default_config import DEFAULT_CONFIG
 from tradingagents.llm_clients import create_tier_client, tier_provider
 from tradingagents.memory import TradingMemoryLog, settlement
@@ -124,7 +124,7 @@ class TradingAgentsGraph:
         path and the CLI call this so the resolved identity reaches the whole
         graph regardless of entry point.
         """
-        identity = resolve_instrument_identity(ticker)
+        identity = {} if asset_type == "forex" else resolve_instrument_identity(ticker)
         return build_instrument_context(ticker, asset_type, identity, trade_date)
 
     def _memory_as_of(self, trade_date) -> str | None:
@@ -297,6 +297,15 @@ class TradingAgentsGraph:
         memory log's lessons are not here: the graph's Memory Log step settles
         and loads them alongside the analysts (see ``_memory_step``).
         """
+        if asset_type == "forex":
+            if forex_pair(company_name) is None:
+                raise ValueError(f"Unsupported forex pair: {company_name!r}")
+            unsupported = set(self.selected_analysts) - {"market", "news"}
+            if unsupported:
+                raise ValueError(
+                    "Forex research supports only market/news analysts; "
+                    f"remove: {', '.join(sorted(unsupported))}"
+                )
         return self.propagator.create_initial_state(
             company_name,
             trade_date,

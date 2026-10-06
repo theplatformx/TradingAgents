@@ -25,16 +25,18 @@ def create_bear_researcher(llm):
         fundamentals_label = (
             "Company fundamentals report"
             if asset_type == "stock"
-            else "Asset fundamentals report (may be unavailable for crypto)"
+            else "Asset fundamentals report (unavailable for forex; may be unavailable for crypto)"
         )
+
+        research_focus = "- Risks and Challenges: Highlight factors like market saturation, financial instability, or macroeconomic threats that could hinder the stock's performance.\n- Competitive Weaknesses: Emphasize vulnerabilities such as weaker market positioning, declining innovation, or threats from competitors.\n- Negative Indicators: Use evidence from financial data, market trends, or recent adverse news to support your position."
+        if asset_type == "forex":
+            research_focus = '- Relative Policy: Assess evidence for base-currency depreciation against the quote currency.\n- Macro Risks: Compare central-bank policy, rate differentials, inflation and growth using dated sources.\n- Negative Indicators: Use verified price action, event risk and relevant macro news; disclose unavailable data.'
 
         prompt = f"""You are a Bear Analyst making the case against investing in the {target_label}. Your goal is to present a well-reasoned argument emphasizing risks, challenges, and negative indicators. Leverage the provided research and data to highlight potential downsides and counter bullish arguments effectively.
 
 Key points to focus on:
 
-- Risks and Challenges: Highlight factors like market saturation, financial instability, or macroeconomic threats that could hinder the stock's performance.
-- Competitive Weaknesses: Emphasize vulnerabilities such as weaker market positioning, declining innovation, or threats from competitors.
-- Negative Indicators: Use evidence from financial data, market trends, or recent adverse news to support your position.
+{research_focus}
 - Bull Counterpoints: Critically analyze the bull argument with specific data and sound reasoning, exposing weaknesses or over-optimistic assumptions.
 - Engagement: Present your argument in a conversational style, directly engaging with the bull analyst's points and debating effectively rather than simply listing facts.
 
