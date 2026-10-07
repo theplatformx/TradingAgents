@@ -10,6 +10,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  demo-telemetry-smoke:
+    name: demo telemetry (synthetic HTTP)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install minimal service dependencies
+        run: pip install -r requirements-origin-service.txt
+      - name: Verify real loopback HTTP using synthetic terminal data
+        run: python -m deploy.origin.smoke
+
   test:
     name: tests (py${{ matrix.python-version }}${{ matrix.tz && format(', {0}', matrix.tz) || '' }})
     runs-on: ubuntu-latest

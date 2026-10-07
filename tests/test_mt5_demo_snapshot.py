@@ -54,7 +54,14 @@ def broker():
         TIMEFRAME_H1=16385,
         account_info=Mock(
             return_value=SimpleNamespace(
-                login=111, server="Example-Demo", trade_mode=0, currency="USD", leverage=100
+                login=111,
+                server="Example-Demo",
+                trade_mode=0,
+                currency="USD",
+                leverage=100,
+                balance=500.0,
+                equity=500.0,
+                margin_free=500.0,
             )
         ),
         terminal_info=Mock(return_value=SimpleNamespace(connected=True)),

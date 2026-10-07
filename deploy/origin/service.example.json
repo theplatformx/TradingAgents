@@ -1,0 +1,10 @@
+{
+  "login": 111,
+  "server": "REPLACE-WITH-VERIFIED-DEMO-SERVER",
+  "symbol": "REPLACE-WITH-EXACT-BROKER-SYMBOL",
+  "timeframe": "H1",
+  "count": 200,
+  "database": "/var/lib/origin-demo/telemetry.sqlite",
+  "read_token_file": "/run/credentials/origin-demo.service/read-token",
+  "ingest_token_file": "/run/credentials/origin-demo.service/ingest-token"
+}

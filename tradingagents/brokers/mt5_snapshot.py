@@ -149,8 +149,12 @@ def collect_snapshot(
         "account": {
             "login": login,
             "server": server,
+            "trade_mode": "demo",
             "currency": account.currency,
             "leverage": int(account.leverage),
+            "balance": _number(account.balance, "balance"),
+            "equity": _number(account.equity, "equity"),
+            "margin_free": _number(account.margin_free, "free margin"),
         },
         "broker_symbol": symbol,
         "timeframe": timeframe,

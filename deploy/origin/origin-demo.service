@@ -1,0 +1,35 @@
+[Unit]
+Description=Origin demo read-only telemetry
+After=network.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+StateDirectory=origin-demo
+StateDirectoryMode=0700
+WorkingDirectory=/opt/origin-demo/current
+LoadCredential=config:/etc/origin-demo/service.json
+LoadCredential=read-token:/etc/origin-demo/read-token
+LoadCredential=ingest-token:/etc/origin-demo/ingest-token
+ExecStart=/opt/origin-demo/current/.venv/bin/python -m tradingagents.brokers.demo_telemetry --config %d/config --revision-file /opt/origin-demo/current/REVISION --port 8765
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+Environment=PYTHONDONTWRITEBYTECODE=1
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
