@@ -1,0 +1,12 @@
+{
+  "login": 111,
+  "server": "REPLACE-WITH-VERIFIED-DEMO-SERVER",
+  "symbol": "REPLACE-WITH-EXACT-BROKER-SYMBOL",
+  "timeframe": "H1",
+  "count": 200,
+  "terminal": "C:\\REPLACE\\terminal64.exe",
+  "service_url": "https://REPLACE-WITH-PRIVATE-TELEMETRY-ORIGIN",
+  "ingest_token_file": "C:\\OriginPrivate\\ingest-token",
+  "log_file": "C:\\OriginPrivate\\collector.log",
+  "interval_seconds": 30
+}

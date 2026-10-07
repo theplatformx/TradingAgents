@@ -1,0 +1,4 @@
+# Minimal telemetry service/collector dependencies; Python 3.11+.
+# MetaTrader5 is deliberately excluded until a real terminal runtime is verified.
+python-dotenv==1.2.4
+waitress==3.0.2
